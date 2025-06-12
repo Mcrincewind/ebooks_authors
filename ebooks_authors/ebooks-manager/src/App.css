@@ -1,0 +1,151 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fafafa;
+  margin: 0;
+  padding: 30px 20px;
+  display: flex;
+  justify-content: center;
+  color: #222;
+}
+
+main {
+  background: #fff;
+  width: 900px;
+  max-width: 95vw;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  padding: 30px 40px;
+}
+
+h1, h2 {
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 25px;
+}
+
+h1 {
+  text-align: center;
+  font-size: 2.2rem;
+}
+
+h2 {
+  font-size: 1.4rem;
+  margin-top: 40px;
+}
+
+button.btn {
+  background-color: #0078d4;
+  border: none;
+  padding: 12px 22px;
+  color: white;
+  font-size: 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+  margin-top: 15px;
+}
+
+button.btn:hover,
+button.btn:focus {
+  background-color: #005a9e;
+  outline: none;
+}
+
+form {
+  margin-bottom: 35px;
+  background: #f9f9f9;
+  padding: 22px 28px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+input[type=text],
+input[type=number],
+input[type=date] {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  margin-bottom: 18px;
+  transition: border-color 0.25s ease;
+}
+
+input[type=text]:focus,
+input[type=number]:focus,
+input[type=date]:focus {
+  border-color: #0078d4;
+  outline: none;
+}
+
+.flex-container {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+.list {
+  flex: 1 1 45%;
+  max-height: 360px;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  padding: 18px 24px;
+  box-shadow: none;
+}
+
+.list-item {
+  background-color: #fafafa;
+  border-radius: 6px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  border: 1px solid #eee;
+  transition: box-shadow 0.3s ease;
+}
+
+.list-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 120, 212, 0.15);
+}
+
+.list-item b {
+  font-size: 1.1rem;
+  color: #0078d4;
+}
+
+.list-item small {
+  color: #666;
+  font-size: 13px;
+  display: block;
+  margin-top: 4px;
+}
+
+#authorsByBookList {
+  margin-top: 15px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  padding: 16px 20px;
+  border: 1px solid #ddd;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+#authorsByBookList p {
+  padding: 8px 0;
+  border-bottom: 1px solid #ddd;
+  margin: 0;
+  font-weight: 600;
+  color: #444;
+}
+
+#authorsByBookList p:last-child {
+  border-bottom: none;
+}

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Διαχείριση Βιβλίων & Συγγραφέων</title>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #eef2f7;
+    margin: 0; padding: 20px;
+    display: flex; justify-content: center;
+  }
+  main {
+    background: #fff;
+    width: 960px;
+    border-radius: 10px;
+    box-shadow: 0 5px 18px rgba(0,0,0,0.12);
+    padding: 30px 40px;
+  }
+  h1, h2 {
+    color: #2c3e50;
+    font-weight: 700;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  button.btn {
+    background-color: #3498db;
+    border: none;
+    padding: 12px 18px;
+    color: white;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 15px;
+    transition: background-color 0.3s ease;
+  }
+  button.btn:hover {
+    background-color: #2980b9;
+  }
+  form {
+    margin-bottom: 30px;
+    background: #f7f9fc;
+    padding: 25px 30px;
+    border-radius: 10px;
+    border: 1px solid #d1d9e6;
+  }
+  label {
+    display: block;
+    font-weight: 600;
+    margin-top: 15px;
+    margin-bottom: 6px;
+    color: #34495e;
+  }
+  input[type=text],
+  input[type=number],
+  input[type=date] {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 6px;
+    border: 1px solid #bcccdc;
+    font-size: 15px;
+    transition: border-color 0.3s ease;
+  }
+  input[type=text]:focus,
+  input[type=number]:focus,
+  input[type=date]:focus {
+    border-color: #3498db;
+    outline: none;
+  }
+  .flex-container {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+  .list {
+    flex: 1 1 45%;
+    max-height: 360px;
+    overflow-y: auto;
+    background: #f9fbfd;
+    border-radius: 10px;
+    border: 1px solid #d1d9e6;
+    padding: 20px 25px;
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.1);
+  }
+  .list-item {
+    background-color: white;
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin-bottom: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    transition: box-shadow 0.3s ease;
+  }
+  .list-item:hover {
+    box-shadow: 0 4px 14px rgba(52, 152, 219, 0.25);
+  }
+  .list-item b {
+    font-size: 18px;
+    color: #2980b9;
+  }
+  .list-item small {
+    color: #7f8c8d;
+    font-size: 13px;
+  }
+  #authorsByBookList {
+    margin-top: 15px;
+    background: #f7f9fc;
+    border-radius: 10px;
+    padding: 18px 25px;
+    border: 1px solid #d1d9e6;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  #authorsByBookList p {
+    padding: 10px 0;
+    border-bottom: 1px solid #d1d9e6;
+    margin: 0;
+    font-weight: 600;
+    color: #34495e;
+  }
+  #authorsByBookList p:last-child {
+    border-bottom: none;
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Διαχείριση Βιβλίων & Συγγραφέων</h1>
+
+  <div class="flex-container">
+    <div>
+      <button id="loadBooksBtn" class="btn">Εμφάνιση Βιβλίων</button>
+      <div id="booksList" class="list"></div>
+    </div>
+    <div>
+      <button id="loadAuthorsBtn" class="btn">Εμφάνιση Συγγραφέων</button>
+      <div id="authorsList" class="list"></div>
+    </div>
+  </div>
+
+  <h2>Προσθήκη Βιβλίου</h2>
+  <form id="addBookForm">
+    <label for="isbn">ISBN:</label>
+    <input type="text" id="isbn" required />
+
+    <label for="title">Τίτλος:</label>
+    <input type="text" id="title" required />
+
+    <label for="category">Κατηγορία:</label>
+    <input type="text" id="category" required />
+
+    <label for="publicationYear">Ημερομηνία Δημοσίευσης:</label>
+    <input type="date" id="publicationYear" required />
+
+    <button type="submit" class="btn">Πρόσθεσε Βιβλίο</button>
+  </form>
+
+  <h2>Προσθήκη Συγγραφέα</h2>
+  <form id="addAuthorForm">
+    <label for="authorName">Όνομα Συγγραφέα:</label>
+    <input type="text" id="authorName" required />
+
+    <label for="authorNationality">Εθνικότητα:</label>
+    <input type="text" id="authorNationality" required />
+
+    <label for="authorBirthDate">Ημερομηνία Γέννησης:</label>
+    <input type="date" id="authorBirthDate" required />
+
+    <button type="submit" class="btn">Πρόσθεσε Συγγραφέα</button>
+  </form>
+
+  <h2>Διαγραφή Βιβλίου</h2>
+  <form id="deleteBookForm">
+    <label for="deleteBookId">ID Βιβλίου:</label>
+    <input type="number" id="deleteBookId" min="1" required />
+    <button type="submit" class="btn">Διαγραφή Βιβλίου</button>
+  </form>
+
+  <h2>Διαγραφή Συγγραφέα</h2>
+  <form id="deleteAuthorForm">
+    <label for="deleteAuthorId">ID Συγγραφέα:</label>
+    <input type="number" id="deleteAuthorId" min="1" required />
+    <button type="submit" class="btn">Διαγραφή Συγγραφέα</button>
+  </form>
+
+  <h2>Ανάθεση Συγγραφέα σε Βιβλίο</h2>
+  <form id="assignAuthorForm">
+    <label for="assignBookId">ID Βιβλίου:</label>
+    <input type="number" id="assignBookId" min="1" required />
+    <label for="assignAuthorId">ID Συγγραφέα:</label>
+    <input type="number" id="assignAuthorId" min="1" required />
+    <button type="submit" class="btn">Ανάθεσε Συγγραφέα</button>
+  </form>
+
+  <h2>Συγγραφείς ανά Βιβλίο</h2>
+  <form id="showAuthorsByBookForm">
+    <label for="showAuthorsBookId">ID Βιβλίου:</label>
+    <input type="number" id="showAuthorsBookId" min="1" required />
+    <button type="submit" class="btn">Εμφάνισε Συγγραφείς</button>
+  </form>
+  <div id="authorsByBookList"></div>
+</main>
+
+<script>
+const baseURL = "http://localhost:8080/ebooksdp";
+
+function formatDate(dateString) {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  if (isNaN(date)) return dateString;
+  return date.toISOString().split('T')[0];
+}
+
+document.getElementById('loadBooksBtn').onclick = () => {
+  axios.get(`${baseURL}/books`)
+    .then(res => {
+      const booksList = document.getElementById('booksList');
+      booksList.innerHTML = '';
+      res.data.forEach(book => {
+        const div = document.createElement('div');
+        div.className = 'list-item';
+        div.innerHTML = `
+          <b>${book.title}</b> (ID: ${book.id})<br/>
+          <small><b>ISBN:</b> ${book.isbn}</small><br/>
+          <small><b>Κατηγορία:</b> ${book.category}</small><br/>
+          <small><b>Ημ. Δημοσίευσης:</b> ${formatDate(book.publication_year)}</small><br/>
+          <small><b>Συγγραφείς:</b> ${book.authors && book.authors.length ? book.authors.map(a => a.name).join(', ') : 'Κανένας'}</small>
+        `;
+        booksList.appendChild(div);
+      });
+    })
+    .catch(() => alert('Σφάλμα στην φόρτωση βιβλίων'));
+};
+
+document.getElementById('loadAuthorsBtn').onclick = () => {
+  axios.get(`${baseURL}/authors`)
+    .then(res => {
+      const authorsList = document.getElementById('authorsList');
+      authorsList.innerHTML = '';
+      res.data.forEach(author => {
+        const div = document.createElement('div');
+        div.className = 'list-item';
+        div.innerHTML = `
+          <b>${author.name}</b> (ID: ${author.id})<br/>
+          <small><b>Εθνικότητα:</b> ${author.nationality}</small><br/>
+          <small><b>Ημ. Γέννησης:</b> ${formatDate(author.birth_date)}</small>
+        `;
+        authorsList.appendChild(div);
+      });
+    })
+    .catch(() => alert('Σφάλμα στην φόρτωση συγγραφέων'));
+};
+
+document.getElementById('addBookForm').onsubmit = e => {
+  e.preventDefault();
+  const isbn = document.getElementById('isbn').value.trim();
+  const title = document.getElementById('title').value.trim();
+  const category = document.getElementById('category').value.trim();
+  const publication_year = document.getElementById('publicationYear').value;
+  if (!publication_year) {
+    alert('Εισάγετε σωστή ημερομηνία');
+    return;
+  }
+  axios.post(`${baseURL}/books`, { isbn, title, category, publication_year })
+    .then(() => {
+      alert('Το βιβλίο προστέθηκε!');
+      document.getElementById('addBookForm').reset();
+      document.getElementById('loadBooksBtn').click();
+    })
+    .catch(() => alert('Σφάλμα κατά την προσθήκη βιβλίου'));
+};
+
+document.getElementById('addAuthorForm').onsubmit = e => {
+  e.preventDefault();
+  const name = document.getElementById('authorName').value.trim();
+  const nationality = document.getElementById('authorNationality').value.trim();
+  const birth_date = document.getElementById('authorBirthDate').value;
+  if (!birth_date) {
+    alert('Εισάγετε σωστή ημερομηνία');
+    return;
+  }
+  axios.post(`${baseURL}/authors`, { name, nationality, birth_date })
+    .then(() => {
+      alert('Ο συγγραφέας προστέθηκε!');
+      document.getElementById('addAuthorForm').reset();
+      document.getElementById('loadAuthorsBtn').click();
+    })
+    .catch(() => alert('Σφάλμα κατά την προσθήκη συγγραφέα'));
+};
+
+document.getElementById('deleteBookForm').onsubmit = e => {
+  e.preventDefault();
+  const id = document.getElementById('deleteBookId').value;
+  axios.delete(`${baseURL}/books/${id}`)
+    .then(() => {
+      alert('Το βιβλίο διαγράφηκε!');
+      document.getElementById('loadBooksBtn').click();
+    })
+    .catch(() => alert('Σφάλμα κατά τη διαγραφή βιβλίου'));
+};
+
+document.getElementById('deleteAuthorForm').onsubmit = e => {
+  e.preventDefault();
+  const id = document.getElementById('deleteAuthorId').value;
+  axios.delete(`${baseURL}/authors/${id}`)
+    .then(() => {
+      alert('Ο συγγραφέας διαγράφηκε!');
+      document.getElementById('loadAuthorsBtn').click();
+    })
+    .catch(() => alert('Σφάλμα κατά τη διαγραφή συγγραφέα'));
+};
+
+document.getElementById('assignAuthorForm').onsubmit = e => {
+  e.preventDefault();
+  const bookId = document.getElementById('assignBookId').value;
+  const authorId = document.getElementById('assignAuthorId').value;
+  axios.post(`${baseURL}/books/${bookId}/authors/${authorId}`)
+    .then(() => {
+      alert('Ο συγγραφέας ανατέθηκε στο βιβλίο!');
+      document.getElementById('loadBooksBtn').click();
+      document.getElementById('loadAuthorsBtn').click();
+    })
+    .catch(() => alert('Σφάλμα κατά την ανάθεση συγγραφέα'));
+};
+
+document.getElementById('showAuthorsByBookForm').onsubmit = e => {
+  e.preventDefault();
+  const bookId = document.getElementById('showAuthorsBookId').value;
+  axios.get(`${baseURL}/books/${bookId}`)
+    .then(res => {
+      const authors = res.data.authors || [];
+      const container = document.getElementById('authorsByBookList');
+      container.innerHTML = '';
+      if (authors.length === 0) {
+        container.textContent = 'Δεν υπάρχουν συγγραφείς για αυτό το βιβλίο.';
+      } else {
+        authors.forEach(a => {
+          const p = document.createElement('p');
+          p.textContent = `${a.name} (ID: ${a.id}) - Εθνικότητα: ${a.nationality}`;
+          container.appendChild(p);
+        });
+      }
+    })
+    .catch(() => alert('Σφάλμα στην εμφάνιση συγγραφέων για το βιβλίο'));
+};
+</script>
+</body>
+</html>

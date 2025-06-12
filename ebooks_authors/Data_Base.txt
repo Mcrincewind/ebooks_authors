@@ -1,0 +1,51 @@
+CREATE DATABASE IF NOT EXISTS ebooksdp;
+USE ebooksdp;
+
+CREATE TABLE Authors (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    nationality VARCHAR(100),
+    birth_date DATE
+);
+
+CREATE TABLE Books (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    isbn VARCHAR(20) NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    category VARCHAR(100),
+    publication_year DATE
+);
+
+CREATE TABLE Books_Authors (
+    book_id INT,
+    author_id INT,
+    PRIMARY KEY (book_id, author_id),
+    FOREIGN KEY (book_id) REFERENCES Books(id) ON DELETE CASCADE,
+    FOREIGN KEY (author_id) REFERENCES Authors(id) ON DELETE CASCADE
+);
+
+Εισαγωγή Συγγραφέων (Authors)
+INSERT INTO Authors (name, nationality, birth_date) VALUES
+('George Orwell', 'British', '1903-06-25'),
+('Jane Austen', 'British', '1775-12-16'),
+('Mark Twain', 'American', '1835-11-30'),
+('Haruki Murakami', 'Japanese', '1949-01-12'),
+('Isabel Allende', 'Chilean', '1942-08-02');
+
+Εισαγωγή Βιβλίων (Books)
+INSERT INTO Books (isbn, title, category, publication_year) VALUES
+('9780451524935', '1984', 'Dystopian', '1949-06-08'),
+('9780141439518', 'Pride and Prejudice', 'Romance', '1813-01-28'),
+('9780486280615', 'Adventures of Huckleberry Finn', 'Adventure', '1884-12-10'),
+('9780375718946', 'Kafka on the Shore', 'Fantasy', '2002-09-12'),
+('9781501117015', 'The House of the Spirits', 'Magical Realism', '1982-01-01');
+
+ Συσχετίσεις Βιβλίων-Συγγραφέων (Books_Authors)
+INSERT INTO Books_Authors (book_id, author_id) VALUES
+(1, 1),  -- 1984 by George Orwell
+(2, 2),  -- Pride and Prejudice by Jane Austen
+(3, 3),  -- Huckleberry Finn by Mark Twain
+(4, 4),  -- Kafka on the Shore by Haruki Murakami
+(5, 5);  -- The House of the Spirits by Isabel Allende
+
+
